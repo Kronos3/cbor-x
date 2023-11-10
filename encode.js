@@ -513,6 +513,25 @@ export class Encoder extends Decoder {
 								encode(entryValue)
 							} 	
 						}
+					} else if (value.toCBOR !== undefined && value.getCBORTag !== undefined) {
+						const cborValue = value.toCBOR();
+						const tag = value.getCBORTag();
+						if (tag < 0x18) {
+							target[position++] = 0xc0 | tag
+						} else if (tag < 0x100) {
+							target[position++] = 0xd8
+							target[position++] = tag
+						} else if (tag < 0x10000) {
+							target[position++] = 0xd9
+							target[position++] = tag >> 8
+							target[position++] = tag & 0xff
+						} else if (tag > -1) {
+							target[position++] = 0xda
+							targetView.setUint32(position, tag)
+							position += 4
+						}
+						encode(cborValue);
+						return;
 					} else {
 						for (let i = 0, l = extensions.length; i < l; i++) {
 							let extensionClass = extensionClasses[i]

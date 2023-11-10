@@ -5,6 +5,11 @@ export enum FLOAT32_OPTIONS {
 	DECIMAL_FIT = 4
 }
 
+export interface TaggedCbor {
+	toCBOR(): any;
+	getCBORTag(): number;
+}
+
 export interface Options {
 	alwaysUseFloat?: boolean
 	useFloat32?: FLOAT32_OPTIONS
